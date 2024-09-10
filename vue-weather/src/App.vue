@@ -2,7 +2,7 @@
     <div class="wrapper">
         <h1>Погодное приложение</h1>
         <p>Узнать погоду в {{ city == '' ? 'вашем городе' : cityName }}</p>
-        <input type="text" v-model="city" placeholder="Введите город">
+        <input type="text" v-model="city"  @keyup.enter="getWeather()" placeholder="Введите город">
         <!-- <button v-show="city != ''">Получить погоду</button> /* если поле пустое - кнопка скрыта */ -->
         <button v-if="city != ''" @click="getWeather()">Получить погоду</button>
         <button disabled v-else>Введите название города</button>
@@ -15,6 +15,8 @@
             <p>{{ showMinTemp }} ℃</p>
             <p>{{ showMaxTemp }} ℃</p>
         </div>
+
+        <p></p>
     </div>
 </template>
 
@@ -35,17 +37,18 @@ export default {
             return '«' + this.city + '»'
         },
         showTemp() {
-            return "Температура: " + this.info.main.temp
+            return "Температура: " + Math.round(this.info.main.temp)
         },
         showFeelsLike() {
-            return "Ощущается как: " + this.info.main.feels_like
+            return "Ощущается как: " + Math.round(this.info.main.feels_like)
         },
         showMinTemp() {
-            return "Минимальная температура:" + this.info.main.temp_min
+            return "Минимальная температура: " + this.info.main.temp_min
         },
         showMaxTemp() {
-            return "Максимальная температура:" + this.info.main.temp_max
+            return "Максимальная температура: " + this.info.main.temp_max
         },
+
     },
     methods: {
         getWeather() {
@@ -54,6 +57,7 @@ export default {
                 return false
             }
             this.error = '';
+            
 
             axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=809594f22110db24040571d5e321c3c2`)
                 .then(res => (this.info = res.data))
